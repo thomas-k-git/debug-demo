@@ -1,2 +1,2 @@
 rootProject.name = "debug-demo"
-include("backend", "proxy")
+include("backend", "proxy", "load-gen")
