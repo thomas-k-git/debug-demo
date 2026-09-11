@@ -8,7 +8,7 @@ val slf4jVersion: String by rootProject.extra
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
 }
 
