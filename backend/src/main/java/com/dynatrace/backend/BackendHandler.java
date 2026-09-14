@@ -1,4 +1,4 @@
-package com.example.backend;
+package com.dynatrace.backend;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

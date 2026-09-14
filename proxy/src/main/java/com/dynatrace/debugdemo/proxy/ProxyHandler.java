@@ -1,4 +1,4 @@
-package com.example.proxy;
+package com.dynatrace.debugdemo.proxy;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
