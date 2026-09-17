@@ -16,8 +16,7 @@ public class BackendHandler extends HttpServlet {
                 resp.getWriter().write("Hello from backend!");
             }
             case "/error" -> {
-                resp.setStatus(500);
-                resp.getWriter().write("Something went wrong");
+                throw new IOException("Demo example backend error");
             }
             default -> resp.setStatus(404);
         }

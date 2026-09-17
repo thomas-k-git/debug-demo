@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class LoadGenApp {
 
     private static final String BASE_URL = System.getProperty("target", "http://localhost:8080");
-    private static final long INTERVAL_MS = Long.parseLong(System.getProperty("interval", "2000"));
+    private static final long INTERVAL_MS = Long.parseLong(System.getProperty("interval", "5000"));
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private static final List<String> ENDPOINTS = List.of("/hello", "/error");
