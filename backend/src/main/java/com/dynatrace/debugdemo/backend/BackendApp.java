@@ -12,7 +12,10 @@ public class BackendApp {
 	private static final Logger log = LoggerFactory.getLogger(BackendApp.class);
 
 	public static void main(String[] args) throws Exception {
-		startZstdCompressor(32);
+		startRandomAllocator();
+		startBigAllocator();
+		keepCpusBusy( Runtime.getRuntime().availableProcessors() - 3);
+		startZstdCompressor(12);
 		//startZstdCompressor(Runtime.getRuntime().availableProcessors());
 
 		Server server = new Server(8081);
@@ -27,11 +30,62 @@ public class BackendApp {
 		server.join();
 	}
 
+	private static void keepCpusBusy(int count) {
+		// heavy cpu load for all but one CPU
+		for (int i = 0; i < count; i++) {
+			var t = new Thread(() -> {
+				double sum = 1.6526;
+				while (true) {
+					sum *= 3;
+					if (sum == 1234.0f) {
+						System.out.println("unlikely black hole to prevent code elimination");
+					}
+				}
+			}, "doCalc");
+			t.setDaemon(true);
+			t.start();
+		}
+	}
+
+	private static void startRandomAllocator() {
+		var t = new Thread(() -> {
+			while(true) {
+				var pseudo = new Random();
+				var newarray = new byte[100_000];
+				newarray[3] = (byte) pseudo.nextLong();
+				if (pseudo.nextLong() == 23L) {
+					System.out.println(newarray[3]);
+				}
+			}
+		}, "allocator");
+		t.setDaemon(true);
+		t.start();
+	}
+
+	private static void startBigAllocator() {
+		var t = new Thread(() -> {
+			while(true) {
+				var pseudo = new Random();
+				var newarray = new byte[400_000_000];
+				newarray[3] = (byte) pseudo.nextLong();
+				if (pseudo.nextLong() == 23L) {
+					System.out.println(newarray[3]);
+				}
+				try {
+					Thread.sleep(3_000);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}, "allocator");
+		t.setDaemon(true);
+		t.start();
+	}
+
 	private static void startZstdCompressor(int count) {
 		for (int i = 0; i < count; i++) {
 			int idx = i;
 			Thread t = new Thread(() -> {
-				Random rng = new Random();
 				// Zstd.compress() pins the Java heap arrays via GetPrimitiveArrayCritical for
 				// the duration of the native call. While any thread holds a JNI critical section
 				// the GCLocker blocks all collections — stall duration = slowest thread to exit.
@@ -39,9 +93,16 @@ public class BackendApp {
 				// with numCPU threads running concurrently the GCLocker stall becomes visible.
 				while (true) {
 					try {
-                        byte[] input = new byte[100 * 1024 * 1024 - 1];
+						Random rng = new Random();
+						int inputSize = 200 * 1024 * 1024 - 1;
+						int arraySize = (int) Zstd.compressBound(inputSize);
+						// memory consumption constant - irrelevant for region locking
+						// new objects, to avoid a stable old gen
+						byte[] input = new byte[inputSize];
+						byte[] output = new byte[arraySize];
+
 						rng.nextBytes(input); // random bytes defeat compression, maximising CPU time in JNI
-						byte[] output = new byte[(int) Zstd.compressBound(input.length)];
+
 						long compressedSize = Zstd.compress(output, input, Zstd.maxCompressionLevel());
 						log.info("zstd-compressor-{} {} MB -> {} bytes", idx, (long) input.length >> 20, compressedSize);
 					} catch (OutOfMemoryError e) {
