@@ -7,6 +7,7 @@ val slf4jVersion: String by rootProject.extra
 
 java {
     toolchain {
+        // JVM 21 still has region pinning issues. 25 has them fixed (pinned regions don't block G1 GC)
         languageVersion.set(JavaLanguageVersion.of(21))
     }
 }

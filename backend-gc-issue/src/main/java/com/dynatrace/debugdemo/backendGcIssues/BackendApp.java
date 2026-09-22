@@ -12,12 +12,18 @@ public class BackendApp {
 	private static final Logger log = LoggerFactory.getLogger(BackendApp.class);
 
 	public static void main(String[] args) throws Exception {
-		startRandomAllocator(20);
-		startBigAllocator();
-		//keepCpusBusy( Runtime.getRuntime().availableProcessors() - 3);
-		startZstdCompressor(1);
-		//startZstdCompressor(Runtime.getRuntime().availableProcessors());
+		// simulating operation under pressure:
 
+		// create some general gc pressure. number a bit lower than number of cores
+		startRandomAllocator(20);
+		// more GC pressure, but bigger memory ask, to force real GC need every few seconds.
+		startBigAllocator();
+		// one thread with huge compression is enough - it will start JNI call, do the compression (eg taking 30 seconds per single call)
+		// and thus block the GC from happening
+		// this is the "1 locked" thread
+		startZstdCompressor(1);
+
+		// jetty server kind of irrelevant here, just for demo purposes, assume you get web requests with zstd compression
 		Server server = new Server(8081);
 
 		ServletContextHandler ctx = new ServletContextHandler();
@@ -28,23 +34,6 @@ public class BackendApp {
 		server.start();
 		log.info("Backend listening on http://localhost:8081");
 		server.join();
-	}
-
-	private static void keepCpusBusy(int count) {
-		// heavy cpu load for all but one CPU
-		for (int i = 0; i < count; i++) {
-			var t = new Thread(() -> {
-				double sum = 1.6526;
-				while (true) {
-					sum *= 3;
-					if (sum == 1234.0f) {
-						System.out.println("unlikely black hole to prevent code elimination");
-					}
-				}
-			}, "doCalc");
-			t.setDaemon(true);
-			t.start();
-		}
 	}
 
 	private static void startRandomAllocator(int count) {
