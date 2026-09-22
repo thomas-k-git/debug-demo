@@ -14,7 +14,7 @@ public class BackendApp {
 	public static void main(String[] args) throws Exception {
 		startRandomAllocator();
 		startBigAllocator();
-		keepCpusBusy( Runtime.getRuntime().availableProcessors() - 3);
+		//keepCpusBusy( Runtime.getRuntime().availableProcessors() - 3);
 		startZstdCompressor(12);
 		//startZstdCompressor(Runtime.getRuntime().availableProcessors());
 
@@ -49,13 +49,18 @@ public class BackendApp {
 
 	private static void startRandomAllocator() {
 		var t = new Thread(() -> {
-			while(true) {
-				var pseudo = new Random();
-				var newarray = new byte[100_000];
-				newarray[3] = (byte) pseudo.nextLong();
-				if (pseudo.nextLong() == 23L) {
-					System.out.println(newarray[3]);
+			try {
+				while(true) {
+					var pseudo = new Random();
+					var newarray = new byte[100_000];
+					newarray[3] = (byte) pseudo.nextLong();
+					if (pseudo.nextLong() == 23L) {
+						System.out.println(newarray[3]);
+					}
 				}
+			} catch (Error e) {
+				System.out.println("allocator OOM");
+				throw e;
 			}
 		}, "allocator");
 		t.setDaemon(true);
@@ -64,20 +69,25 @@ public class BackendApp {
 
 	private static void startBigAllocator() {
 		var t = new Thread(() -> {
-			while(true) {
-				var pseudo = new Random();
-				var newarray = new byte[400_000_000];
-				newarray[3] = (byte) pseudo.nextLong();
-				if (pseudo.nextLong() == 23L) {
-					System.out.println(newarray[3]);
+			try {
+				while(true) {
+					var pseudo = new Random();
+					var newarray = new byte[400_000_000];
+					newarray[3] = (byte) pseudo.nextLong();
+					if (pseudo.nextLong() == 23L) {
+						System.out.println(newarray[3]);
+					}
+					try {
+						Thread.sleep(3_000);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
 				}
-				try {
-					Thread.sleep(3_000);
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
-				}
+			} catch (Error e) {
+				System.out.println("allocator OOM");
+				throw e;
 			}
-		}, "allocator");
+		}, "bigallocator");
 		t.setDaemon(true);
 		t.start();
 	}
@@ -106,7 +116,8 @@ public class BackendApp {
 						long compressedSize = Zstd.compress(output, input, Zstd.maxCompressionLevel());
 						log.info("zstd-compressor-{} {} MB -> {} bytes", idx, (long) input.length >> 20, compressedSize);
 					} catch (OutOfMemoryError e) {
-						// retry
+						System.out.println("zstd OOM");
+						throw e;
 					}
 				}
 			}, "zstd-compressor-" + idx);
