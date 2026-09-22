@@ -4,6 +4,7 @@ plugins {
 
 val jettyVersion: String by rootProject.extra
 val slf4jVersion: String by rootProject.extra
+val logbackVersion: String by rootProject.extra
 
 java {
     toolchain {
@@ -14,7 +15,7 @@ java {
 dependencies {
     implementation("org.eclipse.jetty:jetty-server:$jettyVersion")
     implementation("org.eclipse.jetty.ee10:jetty-ee10-servlet:$jettyVersion")
-    runtimeOnly("org.slf4j:slf4j-simple:$slf4jVersion")
+    runtimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
 }
 
 application {
