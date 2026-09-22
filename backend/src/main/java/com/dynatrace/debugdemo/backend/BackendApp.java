@@ -12,10 +12,10 @@ public class BackendApp {
 	private static final Logger log = LoggerFactory.getLogger(BackendApp.class);
 
 	public static void main(String[] args) throws Exception {
-		startRandomAllocator();
+		startRandomAllocator(20);
 		startBigAllocator();
 		//keepCpusBusy( Runtime.getRuntime().availableProcessors() - 3);
-		startZstdCompressor(12);
+		startZstdCompressor(1);
 		//startZstdCompressor(Runtime.getRuntime().availableProcessors());
 
 		Server server = new Server(8081);
@@ -47,24 +47,26 @@ public class BackendApp {
 		}
 	}
 
-	private static void startRandomAllocator() {
-		var t = new Thread(() -> {
-			try {
-				while(true) {
-					var pseudo = new Random();
-					var newarray = new byte[100_000];
-					newarray[3] = (byte) pseudo.nextLong();
-					if (pseudo.nextLong() == 23L) {
-						System.out.println(newarray[3]);
+	private static void startRandomAllocator(int count) {
+		for (int i = 0; i < count; i++) {
+			Thread t = new Thread(() -> {
+				try {
+					while (true) {
+						var pseudo = new Random();
+						var newarray = new byte[100_000];
+						newarray[3] = (byte) pseudo.nextLong();
+						if (pseudo.nextLong() == 23L) {
+							System.out.println(newarray[3]);
+						}
 					}
+				} catch (Error e) {
+					System.out.println("allocator OOM");
+					throw e;
 				}
-			} catch (Error e) {
-				System.out.println("allocator OOM");
-				throw e;
-			}
-		}, "allocator");
-		t.setDaemon(true);
-		t.start();
+			}, "allocator" + i);
+			t.setDaemon(true);
+			t.start();
+		}
 	}
 
 	private static void startBigAllocator() {
@@ -104,7 +106,7 @@ public class BackendApp {
 				while (true) {
 					try {
 						Random rng = new Random();
-						int inputSize = 200 * 1024 * 1024 - 1;
+						int inputSize = 200_000_000;
 						int arraySize = (int) Zstd.compressBound(inputSize);
 						// memory consumption constant - irrelevant for region locking
 						// new objects, to avoid a stable old gen
