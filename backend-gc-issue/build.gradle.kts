@@ -19,5 +19,15 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.example.backendGcIssues.BackendApp")
+    mainClass.set("com.dynatrace.debugdemo.backendGcIssues.BackendApp")
+}
+
+tasks.named<JavaExec>("run") {
+    doFirst { mkdir("logs") }
+    jvmArgs(
+        "-Xlog:gc*,gc+humongous=debug,gc+jni=debug:file=logs/gc-backend.log:time,uptime,level,tags:filecount=5,filesize=10m",
+        "-Xmx6700M",
+        "-XX:G1HeapRegionSize=210M",
+        "-XX:G1ReservePercent=15"
+    )
 }
