@@ -1,4 +1,4 @@
-package com.dynatrace.debugdemo.backend;
+package com.dynatrace.debugdemo.backendGcIssues;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +18,11 @@ public class BackendHandler extends HttpServlet {
             case "/hello" -> {
                 log.info("GET {} -> 200", uri);
                 resp.setStatus(200);
-                resp.getWriter().write("Hello from backend!");
+                resp.getWriter().write("Hello from backendGcIssues!");
             }
             case "/error" -> {
                 log.error("GET {} -> throwing demo error", uri);
-                throw new IOException("Demo example backend error");
+                throw new IOException("Demo example backendGcIssues error");
             }
             default -> {
                 log.warn("GET {} -> 404", uri);

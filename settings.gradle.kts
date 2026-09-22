@@ -1,2 +1,2 @@
 rootProject.name = "debug-demo"
-include("backend", "proxy", "load-gen")
+include("backendGcIssues", "backendGcIssues-gc-issue", "proxy", "load-gen")

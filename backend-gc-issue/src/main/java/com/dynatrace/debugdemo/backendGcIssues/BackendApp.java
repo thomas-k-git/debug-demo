@@ -1,4 +1,4 @@
-package com.dynatrace.debugdemo.backend;
+package com.dynatrace.debugdemo.backendGcIssues;
 
 import com.github.luben.zstd.Zstd;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
