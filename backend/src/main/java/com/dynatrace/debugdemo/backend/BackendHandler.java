@@ -6,9 +6,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BackendHandler extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(BackendHandler.class);
+    private final List<MyData> storage = new LinkedList<>();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -17,6 +20,7 @@ public class BackendHandler extends HttpServlet {
         switch (uri) {
             case "/hello" -> {
                 log.info("GET {} -> 200", uri);
+                storage.add(new MyData());
                 resp.setStatus(200);
                 resp.getWriter().write("Hello from backendGcIssues!");
             }
