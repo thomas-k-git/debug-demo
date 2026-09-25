@@ -1,4 +1,4 @@
-package com.dynatrace.debugdemo.backendGcIssues;
+package com.dynatrace.debugdemo.backend;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

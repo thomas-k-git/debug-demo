@@ -1,4 +1,4 @@
-package com.dynatrace.debugdemo.backendGcIssues;
+package com.dynatrace.debugdemo.backendCpuIssues;
 
 import com.github.luben.zstd.Zstd;
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
@@ -12,7 +12,7 @@ public class BackendApp {
 	private static final Logger log = LoggerFactory.getLogger(BackendApp.class);
 
 	public static void main(String[] args) throws Exception {
-		startRandomAllocator(20);
+		startRandomAllocator(1);
 		startBigAllocator();
 		keepCpusBusy(Runtime.getRuntime().availableProcessors() / 2);
 		startZstdCompressor(1);

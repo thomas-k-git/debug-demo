@@ -12,6 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/backend" />
+            <option value="$PROJECT_DIR$/backend-cpu-issues" />
             <option value="$PROJECT_DIR$/backend-gc-issue" />
             <option value="$PROJECT_DIR$/load-gen" />
             <option value="$PROJECT_DIR$/proxy" />

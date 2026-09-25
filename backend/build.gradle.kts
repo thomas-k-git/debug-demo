@@ -19,5 +19,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.dynatrace.debugdemo.backendGcIssues.BackendApp")
+    mainClass.set("com.dynatrace.debugdemo.backend.BackendApp")
 }

@@ -21,7 +21,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.dynatrace.debugdemo.backendGcIssues.BackendApp")
+    mainClass.set("com.dynatrace.debugdemo.backendCpuIssues.BackendApp")
 }
 
 tasks.named<JavaExec>("run") {
@@ -29,7 +29,6 @@ tasks.named<JavaExec>("run") {
     jvmArgs(
         "-Xlog:gc*,gc+humongous=debug,gc+jni=debug:file=logs/gc-backend.log:time,uptime,level,tags:filecount=5,filesize=10m",
         "-Xmx9000M",
-        "-XX:G1HeapRegionSize=210M",
         "-XX:G1ReservePercent=15"
     )
 }
