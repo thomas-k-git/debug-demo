@@ -1,4 +1,6 @@
 rootProject.name = "debug-demo"
 include("backend", "proxy", "load-gen",
-    "backend-gc-issue", // separate use case
+    // separate demo cases
+    "backend-gc-issue",
+    "backend-cpu-issues"
 )
