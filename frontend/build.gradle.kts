@@ -21,5 +21,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("com.dynatrace.debugdemo.proxy.ProxyApp")
+    mainClass.set("com.dynatrace.debugdemo.frontend.FrontendApp")
 }

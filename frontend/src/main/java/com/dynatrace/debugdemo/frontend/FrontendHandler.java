@@ -1,4 +1,4 @@
-package com.dynatrace.debugdemo.proxy;
+package com.dynatrace.debugdemo.frontend;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,10 +10,11 @@ import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
-public class ProxyHandler extends HttpServlet {
-    private static final Logger log = LoggerFactory.getLogger(ProxyHandler.class);
+public class FrontendHandler extends HttpServlet {
+    private static final Logger log = LoggerFactory.getLogger(FrontendHandler.class);
     private static final String BACKEND = "http://localhost:8081";
     private CloseableHttpClient httpClient;
 
