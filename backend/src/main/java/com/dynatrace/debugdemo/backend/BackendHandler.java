@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,6 +79,10 @@ public class BackendHandler extends HttpServlet {
                     <html><body>
                       <p>Received: action=<b>%s</b>, name=<b>%s</b>, priority=<b>%s</b></p>
                       <a href="/form">Back</a>
+                      <script>
+                        // Demo: intentionally trigger a JavaScript error in the browser
+                        undefinedFunction();
+                      </script>
                     </body></html>
                     """.formatted(action, name, priority));
         } else {
